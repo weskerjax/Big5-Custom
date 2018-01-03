@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE project>
+<project basedir="." default="build" name="Big5-Custom">
+	
+    <property environment="env"/>
+
+    <property name="proj.name" value="${ant.project.name}" />
+    <property name="debugLevel" value="source,lines,vars"/>
+    <property name="target" value="1.7"/>
+    <property name="source" value="1.7"/>
+    
+    
+    <target name="build" depends="code_generate, build-project, build-jar"/>
+	
+	
+    <target name="code_generate">
+        <echo>=====================================================</echo>
+        <echo>[ Code Generate ]</echo>
+    	
+        <mkdir dir="bin"/>
+    	<delete includeEmptyDirs="true">
+    	    <fileset dir="bin" includes="**/*"/>
+    	</delete>
+        
+        <javac debug="true" debugLevel="${debugLevel}" destDir="bin" includeAntRuntime="true" encoding="UTF-8" source="${source}" target="${target}">
+            <src path="generator"/>
+            <include name="Generator.java"/>	
+        </javac>
+
+        <java className="Generator" failOnError="true" fork="yes">
+        	<jvmarg value="-Dfile.encoding=UTF-8"/>
+        	<classpath path="bin"/>
+        </java>
+    	
+    </target>	
+	
+	
+    <target name="init">
+        <mkdir dir="bin"/>
+        <delete includeEmptyDirs="true">
+            <fileset dir="bin" includes="**/*"/>
+        </delete>
+    	
+        <copy includeEmptyDirs="false" todir="bin">
+            <fileset dir="src" excludes="**/*.java"/>
+        </copy>
+    </target>
+
+
+	
+    <target name="build-project" depends="init">
+        <echo>=====================================================</echo>
+        <echo>[ Build Project ]</echo>
+    	
+        <javac debug="true" debugLevel="${debugLevel}" destDir="bin" includeAntRuntime="false" encoding="UTF-8" source="${source}" target="${target}">
+            <src path="src"/>
+        </javac>
+    </target>
+
+
+    <target name="build-jar">
+        <echo>===================================================</echo>
+        <echo>[ 封裝 ${proj.name}.jar ]</echo>
+
+        <jar destFile="bin/${proj.name}.jar">
+            <manifest>
+                <attribute name="Implementation-Title" value="${proj.name}" /> 
+            </manifest>         
+            
+            <fileset dir="bin" excludes="${proj.name}.jar"/>
+        </jar>
+    </target>
+    
+         
+    
+    <target name="show-properties">
+        <echoproperties />
+    </target>
+    
+	
+</project>
