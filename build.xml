@@ -58,7 +58,24 @@
     </target>
 
 
-    <target name="build-jar">
+    <target name="git-version">
+        <echo>===================================================</echo>
+        <echo>[ 取得 Git 版本日期與編號 ]</echo>
+
+        <exec dir="." executable="git" outputProperty="version.date">
+            <arg line="log -1 --date=short --format=%cd" />
+        </exec>
+        <echo>Version Date: ${version.date}</echo>
+
+
+        <exec dir="." executable="git" outputProperty="version.hash">
+            <arg line="log -1 --format=%h" />
+        </exec>
+        <echo>Version Hash: ${version.hash}</echo>
+    </target>
+    
+    
+    <target name="build-jar" depends="git-version">
         <echo>===================================================</echo>
         <echo>[ 封裝 ${proj.name}.jar ]</echo>
 
